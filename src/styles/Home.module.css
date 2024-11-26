@@ -1,0 +1,51 @@
+.container {
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://wallpaperaccess.com/full/4727334.jpg');
+    color: #ecf0f1;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+
+
+  
+  
+  .header {
+    /*background-color: #e28d0eb0;*/
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .highlight {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+  }
+  
+  .music-player {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .link {
+    color: #fff;
+    text-decoration: underline;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  
+  .footer {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .logo {
+    max-width: 150px; /* Ajuste o tamanho conforme necessário */
+    margin-bottom: 20px; /* Espaço abaixo da logo */
+  }
