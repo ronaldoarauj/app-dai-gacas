@@ -39,7 +39,6 @@ function Home() {
   return (
     <div className={styles.container}>
       <Head>
-      <Head>
         <title>Rádio App Dai Graças</title>
         <meta property="og:title" content="Rádio App Dai Graças" />
         <meta property="og:description" content="Ouça a melhor rádio gospel ao vivo!" />
@@ -50,7 +49,6 @@ function Home() {
         <meta name="twitter:title" content="Rádio App Dai Graças" />
         <meta name="twitter:description" content="Ouça a melhor rádio gospel ao vivo!" />
         <meta name="twitter:image" content="https://zeno.fm/_ipx/q_85&fit_cover&s_64x64/https://images.zeno.fm/5pJY3rvxOMMIEO3JhQkQIpE-mjTW55l-gTo6ss8nq5A/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvODRlYWE2YmQtNWJmZS00MWMzLTkwNjUtMWUzMGIwNjc4MjgyL2ltYWdlLz91PTE3MzI1NjY5MTMwMDA.webp" /> {/* Substitua pela URL da sua imagem */}
-      </Head>
       </Head>
       <header className={styles.header}>
         <h1>Rádio App Dai Graças</h1>
