@@ -64,7 +64,7 @@ function Home() {
           rel="noopener noreferrer"
           className={styles.link}
         >
-          Baixe nosso App
+          Baixe tambem nosso App
         </a>
         </h2>
       </header>
