@@ -45,7 +45,6 @@ function Home() {
     // Aqui você pode enviar a solicitação para um servidor
     try {
       const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
-      console.log(TELEGRAM_BOT_TOKEN);
       const response = await fetch(`https://api.telegram.org/${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: {
