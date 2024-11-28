@@ -5,6 +5,7 @@ import styles from '../styles/Home.module.css';
 function Home() {
   const [currentSong, setCurrentSong] = useState('Carregando...');
   const [currentArtist, setCurrentArtist] = useState('Carregando...');
+  const [songRequest, setSongRequest] = useState('');
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -31,9 +32,43 @@ function Home() {
   }, []);
 
   const handleAudioEnded = () => {
-    // Aqui você pode adicionar lógica para atualizar o nome da música
     setCurrentSong('Carregando próxima música...');
-    // Você pode também reiniciar a conexão com a API se necessário
+  };
+
+  const handleRequestChange = (event) => {
+    setSongRequest(event.target.value);
+  };
+
+  const handleRequestSubmit = async (event) => {
+    event.preventDefault();
+
+    // Aqui você pode enviar a solicitação para um servidor
+    try {
+      const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+      console.log(TELEGRAM_BOT_TOKEN);
+      const response = await fetch(`https://api.telegram.org/${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: "351354199",
+          text: `Solicitação de música: ${songRequest}`,
+          disable_notification: false
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao enviar a solicitação');
+      }
+
+      // Limpa o campo de entrada após o envio
+      setSongRequest('');
+      alert('Solicitação enviada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao enviar a solicitação:', error);
+      alert('Falha ao enviar a solicitação. Tente novamente.');
+    }
   };
 
   return (
@@ -42,37 +77,37 @@ function Home() {
         <title>Rádio App Dai Graças</title>
         <meta property="og:title" content="Rádio App Dai Graças" />
         <meta property="og:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta property="og:image" content="https://raw.githubusercontent.com/ronaldoarauj/app-dai-gacas/refs/heads/main/src/docs/Captura%20de%20tela%202024-11-26%20192953.png" />
-        <meta property="og:url" content="https://app-dai-gacas.vercel.app/" /> {/* Substitua pela URL do seu site */}
+        <meta property="og:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
+        <meta property="og:url" content="https://app-dai-gacas.vercel.app/" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Rádio App Dai Graças" />
         <meta name="twitter:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta name="twitter:image" content="https://raw.githubusercontent.com/ronaldoarauj/app-dai-gacas/refs/heads/main/src/docs/Captura%20de%20tela%202024-11-26%20192953.png" />
+        <meta name="twitter:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
       </Head>
       <header className={styles.header}>
         <h1>Rádio App Dai Graças</h1>
-            <img 
-              src="https://zeno.fm/_ipx/q_85&fit_cover&s_64x64/https://images.zeno.fm/5pJY3rvxOMMIEO3JhQkQIpE-mjTW55l-gTo6ss8nq5A/rs:fill:288:288/g:ce:0:0/aHR0cHM6Ly9wcm94eS56ZW5vLmZtL2NvbnRlbnQvc3RhdGlvbnMvODRlYWE2YmQtNWJmZS00MWMzLTkwNjUtMWUzMGIwNjc4MjgyL2ltYWdlLz91PTE3MzI1NjY5MTMwMDA.webp" 
-              alt="Logo da Rádio App Dai Graças" 
-              className={styles.logo} 
-            />
+        <img
+          src="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q"
+          alt="Logo da Rádio App Dai Graças"
+          className={styles.logo}
+        />
         <h2>
-        <a
-          href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.link}
-        >
-          Baixe nosso App
-        </a>
+          <a
+            href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            Baixe nosso App
+          </a>
         </h2>
       </header>
       <main className={styles.main}>
         <section className={styles.musicPlayer}>
-          <audio 
-            ref={audioRef} 
-            controls 
+          <audio
+            ref={audioRef}
+            controls
             onEnded={handleAudioEnded}
           >
             <source src="https://stream.zeno.fm/cdycmbajedhtv" type="audio/mpeg" />
@@ -80,15 +115,23 @@ function Home() {
           </audio>
         </section>
         <section className={styles.musicInfo}>
-          <h2>Música Atual:</h2>
-          <p>{currentSong}</p>
-          <h3>Artista:</h3>
-          <p>{currentArtist}</p>
+          <h2>Música Atual: {currentSong}</h2>
+          <h3>Artista: {currentArtist}</h3>
         </section>
-        {/* <section className={styles.highlight}>
-          <h2>Músicas em Destaque</h2>
-          <p>Confira as músicas mais tocadas da semana!</p>
-        </section> */}
+        <section className={styles.songRequest}>
+          <h2>Solicitar Música:</h2>
+          <form onSubmit={handleRequestSubmit} className={styles.requestForm}>
+            <input
+              type="text"
+              value={songRequest}
+              onChange={handleRequestChange}
+              placeholder="Música ou artista"
+              required
+              className={styles.requestInput}
+            />
+            <button type="submit" className={styles.requestButton}>Enviar</button>
+          </form>
+        </section>
       </main>
       <footer className={styles.footer}>
         <p>&copy; 2024 Rádio App Dai Graças. Todos os direitos reservados.</p>

@@ -49,3 +49,40 @@
     max-width: 150px; /* Ajuste o tamanho conforme necessário */
     margin-bottom: 20px; /* Espaço abaixo da logo */
   }
+
+  .songRequest {
+    width: 300px; /* Define a largura fixa */
+    margin: 1rem auto; /* Centraliza a seção horizontalmente */
+    padding: 1rem; /* Mantém um padding leve */
+    background-color: #070707; /* Fundo claro */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Sombra leve */
+  }
+  
+  .requestForm {
+    display: flex;
+    flex-direction: column; /* Mantém o layout em coluna */
+    gap: 0.5rem; /* Espaçamento entre o campo de entrada e o botão */
+  }
+  
+  .requestInput {
+    padding: 0.5rem; /* Padding reduzido */
+    font-size: 0.9rem; /* Tamanho da fonte levemente menor */
+    border: 1px solid #ccc; /* Borda padrão */
+    border-radius: 4px; /* Bordas arredondadas */
+  }
+  
+  .requestButton {
+    padding: 0.5rem; /* Padding reduzido */
+    font-size: 0.9rem; /* Tamanho da fonte levemente menor */
+    color: white; /* Cor do texto */
+    background-color: #0070f3; /* Cor do botão */
+    border: none; /* Sem borda */
+    border-radius: 4px; /* Bordas arredondadas */
+    cursor: pointer; /* Cursor de ponteiro */
+    transition: background-color 0.3s ease; /* Transição suave */
+  }
+  
+  .requestButton:hover {
+    background-color: #005bb5; /* Cor ao passar o mouse */
+  }
