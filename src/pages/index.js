@@ -83,6 +83,8 @@ function Home() {
         <meta name="twitter:title" content="Rádio App Dai Graças" />
         <meta name="twitter:description" content="Ouça a melhor rádio gospel ao vivo!" />
         <meta name="twitter:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8828793479535455"
+     crossorigin="anonymous"></script>
       </Head>
       <header className={styles.header}>
         <h1>Rádio App Dai Graças</h1>
