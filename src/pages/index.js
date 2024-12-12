@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import styles from '../styles/index.module.css';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaTelegramPlane } from 'react-icons/fa';
+import { FaGooglePlay, FaTwitter, FaInstagram, FaYoutube, FaTelegramPlane } from 'react-icons/fa';
 
 export default function Home() {
   const [latestArticles, setLatestArticles] = useState([]);
@@ -182,9 +182,9 @@ export default function Home() {
             Siga-nos nas redes sociais e fique por dentro das novidades!
           </p>
           <div className={styles.socialLinks}>
-            {/* <a href="https://www.facebook.com/yourpage" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaFacebook size={30} />
-            </a> */}
+            <a href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving" target="_blank" rel="noopener noreferrer" className={styles.icon}>
+              <FaGooglePlay size={30} />
+            </a>
             <a href="https://www.twitter.com/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.icon}>
               <FaTwitter size={30} />
             </a>
