@@ -86,3 +86,19 @@
   .requestButton:hover {
     background-color: #005bb5; /* Cor ao passar o mouse */
   }
+
+  .icon {
+    color: white;
+    transition: color 0.3s;
+  }
+  
+  .icon:hover {
+    color: #ccc; /* Cor ao passar o mouse */
+  }
+  
+  .socialLinks {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
