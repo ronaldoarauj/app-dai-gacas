@@ -1,209 +1,358 @@
-import { useState, useEffect, useRef } from 'react';
-import Head from 'next/head';
-import styles from '../styles/index.module.css';
-import { FaGooglePlay, FaTwitter, FaInstagram, FaYoutube, FaTelegramPlane } from 'react-icons/fa';
+import { useState, useEffect, useRef } from "react";
+import Head from "next/head";
+import styled from "styled-components";
+import {
+  FaGooglePlay,
+  FaTwitter,
+  FaInstagram,
+  FaYoutube,
+  FaTelegramPlane,
+} from "react-icons/fa";
+
+// Importando o novo Header
+import Header from "../components/Header";
 
 export default function Home() {
   const [latestArticles, setLatestArticles] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [currentSong, setCurrentSong] = useState('Carregando...');
-  const [currentArtist, setCurrentArtist] = useState('Carregando...');
-  const [songRequest, setSongRequest] = useState('');
+  const [currentSong, setCurrentSong] = useState("Carregando...");
+  const [currentArtist, setCurrentArtist] = useState("Carregando...");
+  const [songRequest, setSongRequest] = useState("");
   const audioRef = useRef(null);
 
   useEffect(() => {
-    // Simulate fetching data from an API
     setLatestArticles([
-      { id: 1, title: 'A Importância da Fé na Vida Cristã', date: '2024-12-01' },
-      { id: 2, title: 'Estudo Bíblico: O Sermão da Montanha', date: '2024-11-25' },
-      { id: 3, title: 'Como Fortalecer sua Comunhão com Deus', date: '2024-11-20' },
+      {
+        id: 1,
+        title: "A Importância da Fé na Vida Cristã",
+        date: "2024-12-01",
+      },
+      {
+        id: 2,
+        title: "Estudo Bíblico: O Sermão da Montanha",
+        date: "2024-11-25",
+      },
+      {
+        id: 3,
+        title: "Como Fortalecer sua Comunhão com Deus",
+        date: "2024-11-20",
+      },
     ]);
 
     setUpcomingEvents([
-      { id: 1, title: 'Culto de Natal', date: '2024-12-24' },
-      { id: 2, title: 'Encontro de Jovens', date: '2024-12-31' },
+      { id: 1, title: "Culto de Natal", date: "2024-12-24" },
+      { id: 2, title: "Encontro de Jovens", date: "2024-12-31" },
     ]);
   }, []);
 
   useEffect(() => {
-    const eventSource = new EventSource('https://api.zeno.fm/mounts/metadata/subscribe/cdycmbajedhtv');
+    const eventSource = new EventSource(
+      "https://api.zeno.fm/mounts/metadata/subscribe/cdycmbajedhtv"
+    );
 
     eventSource.onmessage = (event) => {
       if (event.data) {
         const data = JSON.parse(event.data);
         if (data.streamTitle) {
-          const [artist, song] = data.streamTitle.split(' - ');
-          setCurrentArtist(artist.trim());
-          setCurrentSong(song.trim());
+          const [artist, song] = data.streamTitle.split(" - ");
+          setCurrentArtist(artist?.trim() || "");
+          setCurrentSong(song?.trim() || "");
         }
       }
     };
 
-    eventSource.onerror = (error) => {
-      console.error('Erro na conexão com o servidor:', error);
-    };
-
-    return () => {
-      eventSource.close();
-    };
+    eventSource.onerror = () => eventSource.close();
+    return () => eventSource.close();
   }, []);
-
-  const handleAudioEnded = () => {
-    setCurrentSong('Carregando próxima música...');
-  };
-
-  const handleRequestChange = (event) => {
-    setSongRequest(event.target.value);
-  };
 
   const handleRequestSubmit = async (event) => {
     event.preventDefault();
-
     try {
-      const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
-      const response = await fetch(`https://api.telegram.org/${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+      const res = await fetch(`https://api.telegram.org/${TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: "351354199",
           text: `Solicitação de música: ${songRequest}`,
-          disable_notification: false
         }),
       });
-
-      if (!response.ok) {
-        throw new Error('Erro ao enviar a solicitação');
-      }
-
-      setSongRequest('');
-      alert('Solicitação enviada com sucesso!');
-    } catch (error) {
-      console.error('Erro ao enviar a solicitação:', error);
-      alert('Falha ao enviar a solicitação. Tente novamente.');
+      if (!res.ok) throw new Error();
+      setSongRequest("");
+      alert("Solicitação enviada!");
+    } catch {
+      alert("Erro ao enviar solicitação.");
     }
   };
 
+  const [videos] = useState([
+    {
+      id: "dQw4w9WgXcQ",
+      title: "Mensagem de esperança e fé",
+    },
+    {
+      id: "jNQXAC9IVRw",
+      title: "Louvor que toca o coração",
+    },
+    {
+      id: "M7FIvfx5J10",
+      title: "Palavra de motivação espiritual",
+    },
+  ]);
+
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
         <title>Portal Evangélico</title>
-        <meta name="description" content="Portal com artigos e eventos sobre a fé cristã evangélica." />
-        <meta property="og:title" content="Rádio App Dai Graças" />
-        <meta property="og:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta property="og:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
-        <meta property="og:url" content="https://app-dai-gacas.vercel.app/" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Rádio App Dai Graças" />
-        <meta name="twitter:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta name="twitter:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8828793479535455" crossorigin="anonymous"></script>
-      
       </Head>
 
-      <header className={styles.header}>
-        <h1>Portal Evangélico</h1>
-        <nav className={styles.nav}>
-          <a href="#home">Home</a>
-          <a href="#articles">Artigos</a>
-          <a href="#events">Eventos</a>
-          <a href="#contact">Contato</a>
-          <a href="/radio" rel="noopener noreferrer">Rádio</a>
-          <a href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving" target="_blank" rel="noopener noreferrer">App</a>
-        </nav>
-      </header>
+      {/* HEADER IMPORTADO */}
+      <Header />
 
-      <main className={styles.main}>
-        <section id="home" className={styles.section}>
+      <Main>
+        {/* HERO */}
+        <Hero id="home">
           <h2>Bem-vindo ao Portal Evangélico</h2>
           <p>
-            Aqui você encontrará artigos inspiradores, estudos bíblicos, e informações sobre eventos futuros da
-            comunidade evangélica. Junte-se a nós e fortaleça sua fé!
+            Artigos, estudos bíblicos, louvores, vídeos e eventos da comunidade
+            cristã.
           </p>
-        </section>
+        </Hero>
 
-        <section id="music" className={styles.section}>
-          <h2>Rádio</h2>
-          <div className={styles.musicPlayer}>
-            <audio ref={audioRef} controls onEnded={handleAudioEnded}>
-              <source src="https://stream.zeno.fm/cdycmbajedhtv" type="audio/mpeg" />
-              Seu navegador não suporta o elemento de áudio.
+        {/* RÁDIO */}
+        <Section id="music">
+          <SectionTitle>Rádio Online</SectionTitle>
+
+          <RadioCard>
+            <audio ref={audioRef} controls>
+              <source
+                src="https://stream.zeno.fm/cdycmbajedhtv"
+                type="audio/mpeg"
+              />
             </audio>
-          </div>
-          <div className={styles.musicInfo}>
-            <h3>Música Atual: {currentSong}</h3>
-            <h4>Artista: {currentArtist}</h4>
-          </div>
-          <div className={styles.songRequest}>
-            <h3>Solicitar Música:</h3>
-            <form onSubmit={handleRequestSubmit} className={styles.requestForm}>
+
+            <RadioInfo>
+              <h3>{currentSong}</h3>
+              <p>Artista: {currentArtist}</p>
+            </RadioInfo>
+
+            <form onSubmit={handleRequestSubmit}>
               <input
                 type="text"
                 value={songRequest}
-                onChange={handleRequestChange}
-                placeholder="Música ou artista"
+                onChange={(e) => setSongRequest(e.target.value)}
+                placeholder="Solicitar música"
                 required
-                className={styles.requestInput}
               />
-              <button type="submit" className={styles.requestButton}>Enviar</button>
+              <button type="submit">Enviar</button>
             </form>
-          </div>
-        </section>
+          </RadioCard>
+        </Section>
 
-        <section id="articles" className={styles.section}>
-          <h2>Últimos Artigos</h2>
-          <ul>
-            {latestArticles.map((article) => (
-              <li key={article.id}>
-                <h3>{article.title}</h3>
-                <p>{new Date(article.date).toLocaleDateString()}</p>
-              </li>
+        {/* ARTIGOS */}
+        <Section id="articles">
+          <SectionTitle>Últimos Artigos</SectionTitle>
+          <Grid>
+            {latestArticles.map((a) => (
+              <Card key={a.id}>
+                <h3>{a.title}</h3>
+                <span>{new Date(a.date).toLocaleDateString()}</span>
+              </Card>
             ))}
-          </ul>
-        </section>
+          </Grid>
+        </Section>
 
-        <section id="events" className={styles.section}>
-          <h2>Próximos Eventos</h2>
-          <ul>
-            {upcomingEvents.map((event) => (
-              <li key={event.id}>
-                <h3>{event.title}</h3>
-                <p>{new Date(event.date).toLocaleDateString()}</p>
-              </li>
+        {/* EVENTOS */}
+        <Section id="events">
+          <SectionTitle>Próximos Eventos</SectionTitle>
+          <Grid>
+            {upcomingEvents.map((e) => (
+              <Card key={e.id}>
+                <h3>{e.title}</h3>
+                <span>{new Date(e.date).toLocaleDateString()}</span>
+              </Card>
             ))}
-          </ul>
-        </section>
+          </Grid>
+        </Section>
 
-        <section id="contact" className={styles.section}>
-          <h2>Contato</h2>
-          <p>
-            Siga-nos nas redes sociais e fique por dentro das novidades!
-          </p>
-          <div className={styles.socialLinks}>
-            <a href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaGooglePlay size={30} />
-            </a>
-            <a href="https://www.twitter.com/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaTwitter size={30} />
-            </a>
-            <a href="https://www.instagram.com/app.daigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaInstagram size={30} />
-            </a>
-            <a href="https://www.youtube.com/yourchannel" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaYoutube size={30} />
-            </a>
-            <a href="https://t.me/appdaigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-              <FaTelegramPlane size={30} />
-            </a>
-          </div>
-        </section>
-      </main>
+        {/* VÍDEOS */}
+        <Section id="videos">
+          <SectionTitle>Vídeos Recentes</SectionTitle>
 
-      <footer className={styles.footer}>
-        <p>&copy; 2024 Portal Evangélico. Todos os direitos reservados.</p>
-      </footer>
-    </div>
+          <VideosGrid>
+            {videos.map((video) => (
+              <VideoCard key={video.id}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${video.id}`}
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                  allowFullScreen
+                ></iframe>
+                <h3>{video.title}</h3>
+              </VideoCard>
+            ))}
+          </VideosGrid>
+        </Section>
+
+        {/* CONTATO */}
+        <Section id="contact">
+          <SectionTitle>Contato</SectionTitle>
+          <p>Acompanhe nossas redes sociais:</p>
+          <SocialRow>
+            <FaGooglePlay size={28} />
+            <FaTwitter size={28} />
+            <FaInstagram size={28} />
+            <FaYoutube size={28} />
+            <FaTelegramPlane size={28} />
+          </SocialRow>
+        </Section>
+      </Main>
+
+      <Footer>© 2024 Portal Evangélico</Footer>
+    </Container>
   );
 }
+
+/* ===================== STYLES ===================== */
+
+const Container = styled.div`
+  background: #f7f8fa;
+  color: #222;
+  font-family: "Inter", sans-serif;
+`;
+
+const Main = styled.main`
+  padding: 40px;
+`;
+
+const Hero = styled.section`
+  background: linear-gradient(120deg, #0070f3, #54a0ff);
+  color: white;
+  padding: 80px 40px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 40px;
+`;
+
+const Section = styled.section`
+  margin: 60px 0;
+`;
+
+const SectionTitle = styled.h2`
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+`;
+
+const Card = styled.div`
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000010;
+  transition: 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px #00000025;
+  }
+`;
+
+const RadioCard = styled.div`
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000010;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  audio {
+    width: 100%;
+  }
+
+  form {
+    display: flex;
+    gap: 10px;
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #0070f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  }
+`;
+
+const RadioInfo = styled.div`
+  h3 {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+    color: #777;
+  }
+`;
+
+const VideosGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+`;
+
+const VideoCard = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000010;
+  transition: 0.2s;
+
+  iframe {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px #00000025;
+  }
+`;
+
+const SocialRow = styled.div`
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+
+  svg {
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  svg:hover {
+    color: #0070f3;
+    transform: translateY(-4px);
+  }
+`;
+
+const Footer = styled.footer`
+  padding: 25px;
+  text-align: center;
+  margin-top: 50px;
+  color: #777;
+`;

@@ -1,24 +1,28 @@
 import { useEffect, useState, useRef } from 'react';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import styled from 'styled-components';
 import { FaTelegramPlane, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
+import Header from "../components/Header"; // ⬅️ NOVO HEADER
 
-function Home() {
+export default function Radio() {
+
   const [currentSong, setCurrentSong] = useState('Carregando...');
   const [currentArtist, setCurrentArtist] = useState('Carregando...');
   const [songRequest, setSongRequest] = useState('');
   const audioRef = useRef(null);
 
   useEffect(() => {
-    const eventSource = new EventSource('https://api.zeno.fm/mounts/metadata/subscribe/cdycmbajedhtv');
+    const eventSource = new EventSource(
+      'https://api.zeno.fm/mounts/metadata/subscribe/cdycmbajedhtv'
+    );
 
     eventSource.onmessage = (event) => {
       if (event.data) {
         const data = JSON.parse(event.data);
         if (data.streamTitle) {
           const [artist, song] = data.streamTitle.split(' - ');
-          setCurrentArtist(artist.trim());
-          setCurrentSong(song.trim());
+          setCurrentArtist(artist?.trim() || '');
+          setCurrentSong(song?.trim() || '');
         }
       }
     };
@@ -27,17 +31,11 @@ function Home() {
       console.error('Erro na conexão com o servidor:', error);
     };
 
-    return () => {
-      eventSource.close();
-    };
+    return () => eventSource.close();
   }, []);
 
   const handleAudioEnded = () => {
     setCurrentSong('Carregando próxima música...');
-  };
-
-  const handleRequestChange = (event) => {
-    setSongRequest(event.target.value);
   };
 
   const handleRequestSubmit = async (event) => {
@@ -47,110 +45,207 @@ function Home() {
       const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
       const response = await fetch(`https://api.telegram.org/${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: "351354199",
+          chat_id: '351354199',
           text: `Solicitação de música: ${songRequest}`,
-          disable_notification: false
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Erro ao enviar a solicitação');
-      }
+      if (!response.ok) throw new Error('Erro ao enviar');
 
       setSongRequest('');
-      alert('Solicitação enviada com sucesso!');
+      alert('Solicitação enviada!');
     } catch (error) {
-      console.error('Erro ao enviar a solicitação:', error);
-      alert('Falha ao enviar a solicitação. Tente novamente.');
+      alert('Erro ao enviar solicitação.');
     }
   };
 
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
         <title>Rádio App Dai Graças</title>
-        <meta property="og:title" content="Rádio App Dai Graças" />
-        <meta property="og:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta property="og:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
-        <meta property="og:url" content="https://app-dai-gacas.vercel.app/" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Rádio App Dai Graças" />
-        <meta name="twitter:description" content="Ouça a melhor rádio gospel ao vivo!" />
-        <meta name="twitter:image" content="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8828793479535455" crossorigin="anonymous"></script>
       </Head>
-      <header className={styles.header}>
-        <h1>Rádio App Dai Graças</h1>
-        <img
+
+      {/* NOVO TOPO — importado de components/Header.js */}
+      <Header />
+
+      {/* SEU TOPO ANTIGO → agora renomeado para PageHeader */}
+      <PageHeader>
+        <Logo
           src="https://ideogram.ai/assets/image/lossless/response/H9SJbNfIR2GWogzrxjvF1Q"
-          alt="Logo da Rádio App Dai Graças"
-          className={styles.logo}
+          alt="Logo"
         />
-        <h2>
-          <a
-            href="https://play.google.com/store/apps/details?id=br.com.sinforme.thanksgivin.thanksgiving"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            Baixe nosso App
-          </a>
-        </h2>
-      </header>
-      <main className={styles.main}>
-        <section className={styles.musicPlayer}>
-          <audio
-            ref={audioRef}
-            controls
-            onEnded={handleAudioEnded}
-          >
+        <h1>Rádio App Dai Graças</h1>
+        <p>Ouça ao vivo 24h com a melhor seleção gospel</p>
+      </PageHeader>
+
+      <Main>
+        <PlayerSection>
+          <audio ref={audioRef} controls onEnded={handleAudioEnded}>
             <source src="https://stream.zeno.fm/cdycmbajedhtv" type="audio/mpeg" />
-            Seu navegador não suporta o elemento de áudio.
+            Seu navegador não suporta o player.
           </audio>
-        </section>
-        <section className={styles.musicInfo}>
-          <h2>Música Atual: {currentSong}</h2>
-          <h3>Artista: {currentArtist}</h3>
-        </section>
-        <section className={styles.songRequest}>
-          <h2>Solicitar Música:</h2>
-          <form onSubmit={handleRequestSubmit} className={styles.requestForm}>
-            <input
+        </PlayerSection>
+
+        <MusicInfo>
+          <h2>Música Atual</h2>
+          <Song>{currentSong}</Song>
+          <Artist>{currentArtist}</Artist>
+        </MusicInfo>
+
+        <RequestSection>
+          <h2>Solicitar Música</h2>
+          <form onSubmit={handleRequestSubmit}>
+            <Input
               type="text"
+              placeholder="Nome da música ou artista"
               value={songRequest}
-              onChange={handleRequestChange}
-              placeholder="Música ou artista"
+              onChange={(e) => setSongRequest(e.target.value)}
               required
-              className={styles.requestInput}
             />
-            <button type="submit" className={styles.requestButton}>Enviar</button>
+            <Button type="submit">Enviar</Button>
           </form>
-        </section>
-      </main>
-      <footer className={styles.footer}>
-        <p>&copy; 2024 Rádio App Dai Graças. Todos os direitos reservados.</p>
-        <div className={styles.socialLinks}>
-          <a href="https://t.me/appdaigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-            <FaTelegramPlane size={30} />
-          </a>
-          <a href="https://www.twitter.com/appdaigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-            <FaTwitter size={30} />
-          </a>
-          <a href="https://www.instagram.com/app.daigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-            <FaInstagram size={30} />
-          </a>
-          <a href="https://www.youtube.com/appdaigracas" target="_blank" rel="noopener noreferrer" className={styles.icon}>
-            <FaYoutube size={30} />
-          </a>
-        </div>
-      </footer>
-    </div>
+        </RequestSection>
+      </Main>
+
+      <Footer>
+        <p>&copy; 2024 Rádio App Dai Graças</p>
+        <Social>
+          <a href="https://t.me/appdaigracas" target="_blank"><FaTelegramPlane size={26} /></a>
+          <a href="https://twitter.com/appdaigracas" target="_blank"><FaTwitter size={26} /></a>
+          <a href="https://instagram.com/app.daigracas" target="_blank"><FaInstagram size={26} /></a>
+          <a href="https://www.youtube.com/@DaiGracas" target="_blank"><FaYoutube size={26} /></a>
+        </Social>
+      </Footer>
+    </Container>
   );
 }
 
-export default Home;
+/* ------------------------- ESTILOS ------------------------- */
+
+const Container = styled.div`
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  padding-bottom: 40px;
+`;
+
+const PageHeader = styled.header`
+  text-align: center;
+  padding: 40px 20px;
+`;
+
+const Logo = styled.img`
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+`;
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 0 20px;
+  max-width: 700px;
+  margin: auto;
+`;
+
+const PlayerSection = styled.section`
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000015;
+
+  audio {
+    width: 100%;
+  }
+`;
+
+const MusicInfo = styled.section`
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000015;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+`;
+
+const Song = styled.h3`
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #222;
+`;
+
+const Artist = styled.p`
+  font-size: 1.1rem;
+  color: #555;
+`;
+
+const RequestSection = styled.section`
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #00000015;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 15px;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #4b7bec;
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  padding: 14px;
+  background: #4b7bec;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #3867d6;
+  }
+`;
+
+const Footer = styled.footer`
+  margin-top: 50px;
+  text-align: center;
+  color: #555;
+`;
+
+const Social = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
+
+  a {
+    color: #333;
+    transition: 0.2s;
+  }
+
+  a:hover {
+    color: #4b7bec;
+  }
+`;
