@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev"
-  },
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ronaldoarauj/API_next.git"
@@ -22,10 +24,10 @@
     "date-fns": "^3.6.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.0",
-    "next": "^13.4.19",
+    "next": "^16.0.3",
     "nodemailer": "^6.9.16",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-icons": "^5.4.0",
     "styled-components": "^6.1.19",
     "utf8": "^3.0.0"
